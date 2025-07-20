@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Email Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Roboto", sans-serif;
+        }
+
+        body {
+            background-color: #d6e7c0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .main-heading {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 600;
+            color: #202124;
+        }
+
+        .container {
+            display: flex;
+            background-color: rgb(252, 249, 249);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            overflow: hidden;
+        }
+
+        .input-panel {
+            width: 40%;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+        }
+
+        .input-panel h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #202124;
+        }
+
+        .input-panel textarea,
+        .input-panel select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border: 1px solid #dadce0;
+            border-radius: 5px;
+            background-color: white;
+        }
+
+        .input-panel button {
+            padding: 10px 20px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .input-panel button:hover {
+            background-color: #0c63d4;
+        }
+
+        .output-panel {
+            width: 60%;
+            padding: 20px;
+        }
+
+        .output-panel h3 {
+            color: #202124;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .output-box {
+            background-color: #eaf1fb;
+            border: 1px solid #d2e3fc;
+            border-radius: 5px;
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .copy-button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #34a853;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .copy-button:hover {
+            background-color: #2c8a45;
+        }
+
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .input-panel, .output-panel {
+                width: 100%;
+            }
+
+            .output-box {
+                height: auto;
+                min-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="main-heading">AI Powered Email Generator</h1>
+
+    <div class="container">
+        <div class="input-panel">
+            <h2>Email Prompt</h2>
+            <label for="tone">Select Tone:</label>
+            <select id="tone">
+                <option value="">Default</option>
+                <option value="formal">Formal</option>
+                <option value="informal">Informal</option>
+                <option value="professional">Professional</option>
+                <option value="friendly">Friendly</option>
+            </select>
+
+            <label for="emailContent">Email Content:</label>
+            <textarea id="emailContent" rows="10" placeholder="Paste the original email here..."></textarea>
+
+            <label for="selectLanguage">Select Language:</label>
+            <textarea id="selectLanguage" rows="1" placeholder="Write language..."></textarea>
+
+            <button onclick="generateEmail()">Generate Reply</button>
+        </div>
+        <div class="output-panel">
+            <h3>Generated Email</h3>
+            <div class="output-box" id="response">
+                <em>Waiting for input...</em>
+            </div>
+            <button onclick="copyToClipboard()" class="copy-button">📋 Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <script>
+        async function generateEmail() {
+            const content = document.getElementById("emailContent").value;
+            const tone = document.getElementById("tone").value;
+            const language = document.getElementById("selectLanguage").value;
+            const responseDiv = document.getElementById("response");
+
+            if (!content.trim()) {
+                responseDiv.innerHTML = "<em>Please enter the original email content.</em>";
+                return;
+            }
+
+            responseDiv.innerHTML = "<em>⏳ Generating email reply...</em>";
+
+            try {
+                const response = await fetch("/email/generate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        emailContent: content,
+                        tone: tone,
+                        language: language
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    responseDiv.innerHTML = `<em>⚠️ ${errorText}</em>`;
+                    return;
+                }
+
+                const result = await response.text();
+                responseDiv.innerHTML = result;
+            } catch (error) {
+                console.error("Error:", error);
+                responseDiv.innerHTML = "<em>⚠️ Internet connection problem. Please check your network.</em>";
+            }
+        }
+
+        function copyToClipboard() {
+            const responseDiv = document.getElementById("response");
+            const text = responseDiv.innerText;
+
+            if (!text || text.trim() === "" || text.includes("Waiting for input")) {
+                alert("Nothing to copy yet!");
+                return;
+            }
+
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    alert("Copied to clipboard!");
+                })
+                .catch(err => {
+                    console.error("Copy failed", err);
+                    alert("Failed to copy text.");
+                });
+        }
+    </script>
+</body>
+</html>
