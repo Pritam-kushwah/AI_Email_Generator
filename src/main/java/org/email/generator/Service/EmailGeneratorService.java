@@ -91,7 +91,9 @@ public class EmailGeneratorService {
 				+ "Please don't generate subject line ");
 		if(emailRequest.getTone()!=null && !emailRequest.getTone().isEmpty())
 		{
-			prompt.append("Use a ").append(emailRequest.getTone()).append(" tone.");
+			prompt.append("Use a ").append(emailRequest.getTone()).append(" tone.If input email contains"
+					+ " any informal, offensive, or unprofessional language than reply 'Sorry ! containt is unprofessional'"
+					+ " other wise generate reply of email");
 		}
 		if(emailRequest.getLanguage()!=null && !emailRequest.getLanguage().isEmpty())
 		{
