@@ -29,13 +29,16 @@ public class EmailGeneratorController {
 	public ResponseEntity<String> generateEmail(@RequestBody EmailRequest emailRequest)
 	{
 		String response = emailService.generateEmailReply(emailRequest);
-		if(response==null&&response.isEmpty()) return ResponseEntity.ok("Oops something is wrong !..");
+		if(response==null && response.isEmpty()) return ResponseEntity.ok("Oops something is wrong !..");
+		if(!response.trim().equals("Sorry! containt is unprofessional".trim()))
+		{
 		hs.saveEmail(
 			    emailRequest.getEmailContent(),
 			    response,
 			    emailRequest.getTone(),
 			    emailRequest.getLanguage()
 			);
+		}
 		return ResponseEntity.ok(response);
 	}
 }
