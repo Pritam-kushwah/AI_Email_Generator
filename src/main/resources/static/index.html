@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Email Generator</title>
     <style>
         * {
@@ -14,13 +15,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px 20px;
+            padding: 2em 1em;
+            margin: 0;
         }
 
         .main-heading {
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 32px;
+            margin-bottom: 1.5em;
+            font-size: 2em;
             font-weight: 600;
             color: #202124;
         }
@@ -43,30 +45,33 @@
         }
 
         .input-panel h2 {
-            font-size: 20px;
-            margin-bottom: 20px;
+            font-size: 1.25em;
+            margin-bottom: 1em;
             color: #202124;
         }
 
         .input-panel textarea,
         .input-panel select {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
+            padding: 0.75em;
+            margin-bottom: 1em;
+            font-size: 1em;
             border: 1px solid #dadce0;
             border-radius: 5px;
             background-color: white;
+            resize: vertical;
         }
 
         .input-panel button {
-            padding: 10px 20px;
+            width: 100%;
+            padding: 0.75em;
             background-color: #1a73e8;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 1em;
         }
 
         .input-panel button:hover {
@@ -80,35 +85,38 @@
 
         .output-panel h3 {
             color: #202124;
-            font-size: 18px;
-            margin-bottom: 10px;
+            font-size: 1.1em;
+            margin-bottom: 0.5em;
         }
 
         .output-box {
             background-color: #eaf1fb;
             border: 1px solid #d2e3fc;
             border-radius: 5px;
-            padding: 15px;
+            padding: 1em;
             height: 300px;
             overflow-y: auto;
             white-space: pre-wrap;
+            font-size: 1em;
         }
 
         .copy-button {
-            margin-top: 10px;
-            padding: 8px 16px;
+            margin-top: 1em;
+            padding: 0.5em 1em;
             background-color: #34a853;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 1em;
         }
 
         .copy-button:hover {
             background-color: #2c8a45;
         }
 
+        /* Responsive Design */
         @media screen and (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -116,11 +124,21 @@
 
             .input-panel, .output-panel {
                 width: 100%;
+                padding: 15px;
             }
 
             .output-box {
                 height: auto;
                 min-height: 200px;
+            }
+
+            .main-heading {
+                font-size: 1.5em;
+            }
+
+            .input-panel button, .copy-button {
+                width: 100%;
+                font-size: 1em;
             }
         }
     </style>
@@ -141,13 +159,14 @@
             </select>
 
             <label for="emailContent">Email Content:</label>
-            <textarea id="emailContent" rows="10" placeholder="Paste the original email here..."></textarea>
+            <textarea id="emailContent" rows="8" placeholder="Paste the original email here..."></textarea>
 
             <label for="selectLanguage">Select Language:</label>
             <textarea id="selectLanguage" rows="1" placeholder="Write language (Optional)"></textarea>
 
             <button onclick="generateEmail()">Generate Reply</button>
         </div>
+
         <div class="output-panel">
             <h3>Generated Email</h3>
             <div class="output-box" id="response">
@@ -186,7 +205,7 @@
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    responseDiv.innerHTML = <em>⚠ ${errorText}</em>;
+                    responseDiv.innerHTML = `<em>⚠ ${errorText}</em>`;
                     return;
                 }
 
